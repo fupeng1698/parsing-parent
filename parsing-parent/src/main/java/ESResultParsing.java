@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
+import org.junit.Test;
 import pojo.Page;
 
 import java.util.ArrayList;
@@ -12,11 +13,63 @@ import java.util.Map;
 /**
  * 共有的es解析，包括解析es聚合和es查询结果
  */
-@AllArgsConstructor
+
 public class ESResultParsing implements Parsing {
 
 
+
     private  List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
+
+
+    @Test
+    public void test() {
+
+        String result = "{\n" +
+                "  \"took\" : 1,\n" +
+                "  \"timed_out\" : false,\n" +
+                "  \"_shards\" : {\n" +
+                "    \"total\" : 1,\n" +
+                "    \"successful\" : 1,\n" +
+                "    \"skipped\" : 0,\n" +
+                "    \"failed\" : 0\n" +
+                "  },\n" +
+                "  \"hits\" : {\n" +
+                "    \"total\" : 1,\n" +
+                "    \"max_score\" : 0.0,\n" +
+                "    \"hits\" : [ ]\n" +
+                "  },\n" +
+                "  \"aggregations\" : {\n" +
+                "    \"fdbid\" : {\n" +
+                "      \"doc_count_error_upper_bound\" : 0,\n" +
+                "      \"sum_other_doc_count\" : 0,\n" +
+                "      \"buckets\" : [\n" +
+                "        {\n" +
+                "          \"key\" : 1016,\n" +
+                "          \"doc_count\" : 1,\n" +
+                "          \"fid\" : {\n" +
+                "            \"doc_count_error_upper_bound\" : 0,\n" +
+                "            \"sum_other_doc_count\" : 0,\n" +
+                "            \"buckets\" : [\n" +
+                "              {\n" +
+                "                \"key\" : 48470818,\n" +
+                "                \"doc_count\" : 1,\n" +
+                "                \"total\" : {\n" +
+                "                  \"value\" : 1016.0\n" +
+                "                },\n" +
+                "                \"SUM(fid)\" : {\n" +
+                "                  \"value\" : 4.8470818E7\n" +
+                "                }\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        }\n" +
+                "      ]\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+        System.out.println(parsing(result));
+
+    }
 
 
     public  Page<Map<String, Object>> parsing(String result) {
@@ -72,9 +125,16 @@ public class ESResultParsing implements Parsing {
                         }
                     }
                 }
+                Object value = bucket.get("key");
+                for (Map.Entry<String,Object> entry : cycleMap.entrySet()) {
+                    if (entry.getValue() == null) {
+                        entry.setValue(value);
+                    }
+                }
                 if (tag) {
                     Map<String, Object> itemMap = new HashMap<String, Object>();
                     for (String key : bucket.keySet()) {
+
                         if (!key.equals("key") && !key.equals("doc_count")) {
                             if (bucket.getJSONObject(key).containsKey("buckets")) {
                                 ArrayList<Map<String, Object>> includeList = new ArrayList<Map<String, Object>>();
@@ -96,8 +156,8 @@ public class ESResultParsing implements Parsing {
                                 itemMap.put(key, includeList);
                             } else {
                                 //下层非集合
-                                Object value = bucket.getJSONObject(key).get("value");
-                                itemMap.put(key, value);
+                                Object valueObj = bucket.getJSONObject(key).get("value");
+                                itemMap.put(key, valueObj);
                             }
                         }
                     }
@@ -109,15 +169,10 @@ public class ESResultParsing implements Parsing {
                     itemList.add(itemMap);
                 } else {
 
-                    Object value = bucket.get("key");
-                    for (Map.Entry<String,Object> entry : cycleMap.entrySet()) {
-                        if (entry.getValue() == null) {
-                            entry.setValue(value);
-                        }
-                    }
                     for (String key : bucket.keySet()) {
                         if (!key.equals("key") && !key.equals("doc_count") && !key.equals("key_as_string")) {
                             JSONObject nextObj = bucket.getJSONObject(key);
+                            cycleMap.put(key, null);
                             parsingAggregations(nextObj, cycleMap);
                         }
                     }
