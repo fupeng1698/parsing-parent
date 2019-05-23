@@ -1,14 +1,10 @@
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import lombok.AllArgsConstructor;
 import org.junit.Test;
 import pojo.Page;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 共有的es解析，包括解析es聚合和es查询结果
@@ -20,12 +16,11 @@ public class ESResultParsing implements Parsing {
 
     private  List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
 
-
     @Test
-    public void test() {
+    public void test2() {
 
         String result = "{\n" +
-                "  \"took\" : 1,\n" +
+                "  \"took\" : 2,\n" +
                 "  \"timed_out\" : false,\n" +
                 "  \"_shards\" : {\n" +
                 "    \"total\" : 1,\n" +
@@ -51,22 +46,270 @@ public class ESResultParsing implements Parsing {
                 "            \"sum_other_doc_count\" : 0,\n" +
                 "            \"buckets\" : [\n" +
                 "              {\n" +
+                "                \"key\" : 48470817,\n" +
+                "                \"doc_count\" : 1,\n" +
+                "                \"total\" : {\n" +
+                "                  \"value\" : 1016.0\n" +
+                "                },\n" +
+                "                \"SUM(fid)\" : {\n" +
+                "                  \"value\" : 4.8470817E7\n" +
+                "                }\n" +
+                "              }\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        },\n" +
+                "                {\n" +
+                "          \"key\" : 1017,\n" +
+                "          \"doc_count\" : 1,\n" +
+                "          \"fid\" : {\n" +
+                "            \"doc_count_error_upper_bound\" : 0,\n" +
+                "            \"sum_other_doc_count\" : 0,\n" +
+                "            \"buckets\" : [\n" +
+                "              {\n" +
                 "                \"key\" : 48470818,\n" +
                 "                \"doc_count\" : 1,\n" +
                 "                \"total\" : {\n" +
                 "                  \"value\" : 1016.0\n" +
                 "                },\n" +
                 "                \"SUM(fid)\" : {\n" +
-                "                  \"value\" : 4.8470818E7\n" +
+                "                  \"value\" : 4.8470817E7\n" +
+                "                }\n" +
+                "              },\n" +
+                "                {\n" +
+                "                \"key\" : 48470819,\n" +
+                "                \"doc_count\" : 1,\n" +
+                "                \"total\" : {\n" +
+                "                  \"value\" : 1016.0\n" +
+                "                },\n" +
+                "                \"SUM(fid)\" : {\n" +
+                "                  \"value\" : 4.8470817E7\n" +
                 "                }\n" +
                 "              }\n" +
                 "            ]\n" +
                 "          }\n" +
-                "        }\n" +
+                "        },\n" +
+                "            {\n" +
+                "                    \"key\":1018,\n" +
+                "                    \"doc_count\":1,\n" +
+                "                    \"fid\":{\n" +
+                "                        \"doc_count_error_upper_bound\":0,\n" +
+                "                        \"sum_other_doc_count\":0,\n" +
+                "                        \"buckets\":[\n" +
+                "                            {\n" +
+                "                                \"key\":48470818,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"total\":{\n" +
+                "                                    \"value\":1016\n" +
+                "                                },\n" +
+                "                                \"SUM(fid)\":{\n" +
+                "                                    \"value\":48470817\n" +
+                "                                }\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"key\":48470819,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"total\":{\n" +
+                "                                    \"value\":1016\n" +
+                "                                },\n" +
+                "                                \"SUM(fid)\":{\n" +
+                "                                    \"value\":48470817\n" +
+                "                                }\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "                    }\n" +
+                "                }\n" +
                 "      ]\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
+        System.out.println(parsing(result));
+
+    }
+
+    @Test
+    public void test1() {
+
+        String result = "{\n" +
+                "    \"took\":2,\n" +
+                "    \"timed_out\":false,\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\":1,\n" +
+                "        \"successful\":1,\n" +
+                "        \"skipped\":0,\n" +
+                "        \"failed\":0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\":1,\n" +
+                "        \"max_score\":0,\n" +
+                "        \"hits\":[\n" +
+                "\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"aggregations\":{\n" +
+                "        \"fdbid\":{\n" +
+                "            \"doc_count_error_upper_bound\":0,\n" +
+                "            \"sum_other_doc_count\":0,\n" +
+                "            \"buckets\":[\n" +
+                "                {\n" +
+                "                    \"key\":1016,\n" +
+                "                    \"doc_count\":1,\n" +
+                "                    \"fid\":{\n" +
+                "                        \"doc_count_error_upper_bound\":0,\n" +
+                "                        \"sum_other_doc_count\":0,\n" +
+                "                        \"buckets\":[\n" +
+                "                            {\n" +
+                "                                \"key\":48470817,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"fid1\":{\n" +
+                "                                    \"doc_count_error_upper_bound\":0,\n" +
+                "                                    \"sum_other_doc_count\":0,\n" +
+                "                                    \"buckets\":[\n" +
+                "                                        {\n" +
+                "                                            \"key\":123,\n" +
+                "                                            \"doc_count\":1,\n" +
+                "                                            \"total\":{\n" +
+                "                                                \"value\":1016\n" +
+                "                                            },\n" +
+                "                                            \"SUM(fid)\":{\n" +
+                "                                                \"value\":48470817\n" +
+                "                                            }\n" +
+                "                                        }\n" +
+                "                                    ]\n" +
+                "                                }\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"key\":1017,\n" +
+                "                    \"doc_count\":1,\n" +
+                "                    \"fid\":{\n" +
+                "                        \"doc_count_error_upper_bound\":0,\n" +
+                "                        \"sum_other_doc_count\":0,\n" +
+                "                        \"buckets\":[\n" +
+                "                            {\n" +
+                "                                \"key\":48470818,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"fid1\":{\n" +
+                "                                    \"doc_count_error_upper_bound\":0,\n" +
+                "                                    \"sum_other_doc_count\":0,\n" +
+                "                                    \"buckets\":[\n" +
+                "                                        {\n" +
+                "                                            \"key\":111,\n" +
+                "                                            \"doc_count\":1,\n" +
+                "                                            \"total\":{\n" +
+                "                                                \"value\":1016\n" +
+                "                                            },\n" +
+                "                                            \"SUM(fid)\":{\n" +
+                "                                                \"value\":48470817\n" +
+                "                                            }\n" +
+                "                                        },\n" +
+                "                                        {\n" +
+                "                                            \"key\":222,\n" +
+                "                                            \"doc_count\":1,\n" +
+                "                                            \"total\":{\n" +
+                "                                                \"value\":1016\n" +
+                "                                            },\n" +
+                "                                            \"SUM(fid)\":{\n" +
+                "                                                \"value\":48470817\n" +
+                "                                            }\n" +
+                "                                        }\n" +
+                "                                    ]\n" +
+                "                                }\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "                    }\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+        System.out.println(result);
+        System.out.println(parsing(result));
+
+    }
+
+
+    @Test
+    public void test() {
+
+        String result = "{\n" +
+                "    \"took\":2,\n" +
+                "    \"timed_out\":false,\n" +
+                "    \"_shards\":{\n" +
+                "        \"total\":1,\n" +
+                "        \"successful\":1,\n" +
+                "        \"skipped\":0,\n" +
+                "        \"failed\":0\n" +
+                "    },\n" +
+                "    \"hits\":{\n" +
+                "        \"total\":1,\n" +
+                "        \"max_score\":0,\n" +
+                "        \"hits\":[\n" +
+                "\n" +
+                "        ]\n" +
+                "    },\n" +
+                "    \"aggregations\":{\n" +
+                "        \"fdbid\":{\n" +
+                "            \"doc_count_error_upper_bound\":0,\n" +
+                "            \"sum_other_doc_count\":0,\n" +
+                "            \"buckets\":[\n" +
+                "                {\n" +
+                "                    \"key\":1016,\n" +
+                "                    \"doc_count\":1,\n" +
+                "                    \"fid\":{\n" +
+                "                        \"doc_count_error_upper_bound\":0,\n" +
+                "                        \"sum_other_doc_count\":0,\n" +
+                "                        \"buckets\":[\n" +
+                "                            {\n" +
+                "                                \"key\":48470817,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"total\":{\n" +
+                "                                    \"value\":1016\n" +
+                "                                },\n" +
+                "                                \"SUM(fid)\":{\n" +
+                "                                    \"value\":48470817\n" +
+                "                                }\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "                    }\n" +
+                "                },\n" +
+                "                {\n" +
+                "                    \"key\":1017,\n" +
+                "                    \"doc_count\":1,\n" +
+                "                    \"fid\":{\n" +
+                "                        \"doc_count_error_upper_bound\":0,\n" +
+                "                        \"sum_other_doc_count\":0,\n" +
+                "                        \"buckets\":[\n" +
+                "                            {\n" +
+                "                                \"key\":48470818,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"total\":{\n" +
+                "                                    \"value\":1016\n" +
+                "                                },\n" +
+                "                                \"SUM(fid)\":{\n" +
+                "                                    \"value\":48470817\n" +
+                "                                }\n" +
+                "                            },\n" +
+                "                            {\n" +
+                "                                \"key\":48470819,\n" +
+                "                                \"doc_count\":1,\n" +
+                "                                \"total\":{\n" +
+                "                                    \"value\":1016\n" +
+                "                                },\n" +
+                "                                \"SUM(fid)\":{\n" +
+                "                                    \"value\":48470817\n" +
+                "                                }\n" +
+                "                            }\n" +
+                "                        ]\n" +
+                "                    }\n" +
+                "                }\n" +
+                "            ]\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "\n";
+
         System.out.println(parsing(result));
 
     }
@@ -106,13 +349,16 @@ public class ESResultParsing implements Parsing {
         return page;
     }
 
+    int index = 0;
 
 
-    public  void parsingAggregations(JSONObject rootEntry, Map<String, Object> cycleMap) {
+    public  void parsingAggregations(JSONObject rootEntry, LinkedHashMap<String, Object> cycleMap ) {
 
         if (rootEntry.containsKey("buckets")) {
             JSONArray buckets = rootEntry.getJSONArray("buckets");
+
             for (int i = 0; i < buckets.size(); i++) {
+
                 JSONObject bucket = buckets.getJSONObject(i);
 
                 boolean tag = false;
@@ -126,11 +372,15 @@ public class ESResultParsing implements Parsing {
                     }
                 }
                 Object value = bucket.get("key");
-                for (Map.Entry<String,Object> entry : cycleMap.entrySet()) {
-                    if (entry.getValue() == null) {
-                        entry.setValue(value);
+
+                int h = 0;
+                for (String key : cycleMap.keySet()) {
+                    if (h == index) {
+                        cycleMap.put(key, value);
                     }
+                    h += 1;
                 }
+
                 if (tag) {
                     Map<String, Object> itemMap = new HashMap<String, Object>();
                     for (String key : bucket.keySet()) {
@@ -167,15 +417,19 @@ public class ESResultParsing implements Parsing {
                         }
                     }
                     itemList.add(itemMap);
+                    if (i == (buckets.size() - 1)) {
+                        index = 0;
+                    }
                 } else {
-
                     for (String key : bucket.keySet()) {
                         if (!key.equals("key") && !key.equals("doc_count") && !key.equals("key_as_string")) {
                             JSONObject nextObj = bucket.getJSONObject(key);
-                            cycleMap.put(key, null);
+                            cycleMap.put(key,null);
+                            index += 1;
                             parsingAggregations(nextObj, cycleMap);
                         }
                     }
+
                 }
             }
         }
@@ -183,11 +437,13 @@ public class ESResultParsing implements Parsing {
             for (String key : rootEntry.keySet()) {
                 if (!key.equals("key") && !key.equals("doc_count") && !key.equals("key_as_string")) {
                     JSONObject nextObj = rootEntry.getJSONObject(key);
-                    Object keyValue = nextObj.get("key");
                     if (cycleMap == null) {
-                        cycleMap  = new HashMap<>();
+                        cycleMap  = new LinkedHashMap<>();
+                        index = 0;
+                    } else {
+                        index += 1;
                     }
-                    cycleMap.put(key,keyValue);
+                    cycleMap.put(key,null);
                     parsingAggregations(nextObj, cycleMap);
                 }
             }
